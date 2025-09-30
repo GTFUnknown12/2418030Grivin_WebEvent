@@ -1,0 +1,7 @@
+Projek ini adalah bagian dari tugas praktikum pemprograman website!
+Nama 	 : Grivin William Revel
+Nim  	 : 2418030
+Linkedln : www.linkedin.com/in/grivin-w-1215a22b0
+
+Projek ini adalah projek praktikum. Namun, saya tetap menggunakan aset dan tampilan dari website asli untuk kemudahan dalam modifikasi css!
+

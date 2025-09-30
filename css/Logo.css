@@ -1,0 +1,9 @@
+/*Untuk logo login dan register */
+.logo {
+            /* Anda bisa menambahkan gaya ke div .logo jika diperlukan untuk centering atau sizing */
+            width: 200px;   /* ukuran logo */
+            height: auto;
+            margin : auto;
+             /* kasih jarak kecil ke teks (opsional) */
+            display: block;
+}
