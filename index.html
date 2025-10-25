@@ -328,7 +328,7 @@
                         <td>Main Hall</td>
                     </tr>
                     <tr>
-                        <td>6:30 PM</td>
+                        <td>6:30 PM</td>    
                         <td>Networking Reception</td>
                         <td>-</td>
                         <td>Grand Ballroom</td>
@@ -683,6 +683,55 @@
       contactSnackbar.classList.remove("show");
     }, 3000);
   });
+
+  // ngesubrek button #1
+(function() {
+  // Create modal HTML
+  const modalHtml = `
+  <div id="assistModal" class="assist-modal" style="display:none;position:fixed;inset:0;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);z-index:9999;">
+    <div style="background:#fff;border-radius:8px;padding:20px;max-width:460px;width:90%;box-shadow:0 8px 30px rgba(0,0,0,0.2);">
+      <h3 id="assistModalTitle">Welcome</h3>
+      <p id="assistModalBody">This site has interactive features (popups, events, storage, fetch, promises).</p>
+      <div style="text-align:right;margin-top:12px;">
+        <button id="assistModalClose" class="btn">Close</button>
+      </div>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+  const assistModal = document.getElementById('assistModal');
+  const assistModalClose = document.getElementById('assistModalClose');
+  assistModalClose.addEventListener('click', () => {
+    assistModal.style.display = 'none';
+  });
+
+  // Expose show function
+  window.showAssistModal = function(title, body) {
+    document.getElementById('assistModalTitle').textContent = title;
+    document.getElementById('assistModalBody').textContent = body;
+    assistModal.style.display = 'flex';
+  };
+})();
+
+// Konfirmasi ke#2
+function confirmSubscribe() {
+  const ok = confirm('Do you want to subscribe for updates?');
+  if (!ok) {
+    alert('Yaudah sih....');
+    return false;
+  }
+  const email = prompt('Masukan (example@example.com):', '');
+  if (email) {
+    // save to localStorage
+    try { localStorage.setItem('Subscribe_Email', email); } catch(e){}
+    alert('TerimaKasih Emailmu telah disimpan secara lokal.');
+    return true;
+  } else {
+    alert('Subscription dibatalkan.');
+    return false;
+  }
+}
+
 
         
     </script>
