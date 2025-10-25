@@ -715,7 +715,7 @@
 
 // Konfirmasi ke#2
 function confirmSubscribe() {
-  const ok = confirm('Do you want to subscribe for updates?');
+  const ok = confirm('Apakah kamu mau subscribe?');
   if (!ok) {
     alert('Yaudah sih....');
     return false;
@@ -731,6 +731,111 @@ function confirmSubscribe() {
     return false;
   }
 }
+
+// ===== Events: add 3+ event listeners =====
+document.addEventListener('DOMContentLoaded', () => {
+  // 1) Click event on all .event-details-btn to open modal with details
+  document.querySelectorAll('.event-details-btn').forEach((btn, i) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const card = btn.closest('.event-card');
+      const title = card?.querySelector('h3')?.textContent || ('Event '+(i+1));
+      const desc = card?.querySelector('.event-desc')?.textContent || '';
+      showAssistModal(title, desc + '\n\n(Click Close to dismiss)');
+    });
+  });
+
+  // 2) Mouseover event: when hovering any .event-card, store lastHover
+  document.querySelectorAll('.event-card').forEach(card => {
+    card.addEventListener('mouseover', () => {
+      const t = card.querySelector('h3')?.textContent || 'Unknown event';
+      try { localStorage.setItem('lastHover', t); } catch(e){}
+      // visual feedback
+      card.style.transform = 'translateY(-6px)';
+    });
+    card.addEventListener('mouseout', () => { card.style.transform = ''; });
+  });
+
+  // 3) Keyup event: show snackbar when user types 'h' on keyboard (example)
+  document.addEventListener('keyup', (ev) => {
+    if (ev.key.toLowerCase() === 'h') {
+      const last = localStorage.getItem('lastHover') || 'no event hovered yet';
+      showAssistModal('Quick Help', 'Last hovered event: '+ last);
+    }
+  });
+
+  // 4) Click on a special button we'll insert to demonstrate confirm/prompt
+  const topBar = document.querySelector('header .container') || document.body;
+  const demoBtn = document.createElement('a');
+  demoBtn.textContent = 'Subscribe';
+  demoBtn.className = 'nav-links';
+  demoBtn.style.marginLeft = '-270px';
+  demoBtn.style.cursor = 'pointer'
+  demoBtn.addEventListener('click', () => {
+    confirmSubscribe();
+  });
+  // append near navigation
+  const nav = document.querySelector('nav');
+  if (nav) { nav.appendChild(demoBtn); } else { topBar.appendChild(demoBtn); }
+
+  // 5) Form submit event example: if a contact form exists, intercept and save
+  const contactForm = document.querySelector('form#contactForm') || document.querySelector('form');
+  if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formData = new FormData(contactForm);
+      const obj = {};
+      formData.forEach((v,k) => obj[k]=v);
+      try { localStorage.setItem('lastContact', JSON.stringify(obj)); } catch(e){}
+      showAssistModal('Contact saved locally', 'We saved the contact form data to localStorage.');
+      contactForm.reset();
+    });
+  }
+
+  // Load a stored theme preference (example use of Web Storage)
+  const theme = localStorage.getItem('site_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', theme);
+});
+
+// ===== Fetch + Promise example =====
+// We'll fetch a local JSON (events.json) and display count in the header.
+// Create a Promise wrapper that resolves with parsed JSON.
+function fetchEventsJson(url) {
+  return new Promise((resolve, reject) => {
+    fetch(url).then(resp => {
+      if (!resp.ok) throw new Error('Network error');
+      return resp.json();
+    }).then(data => resolve(data)).catch(err => reject(err));
+  });
+}
+
+// Async/Await usage to get events and update DOM
+(async function loadEvents() {
+  const url = 'data/events.json';
+  try {
+    const events = await fetchEventsJson(url);
+    // simple display: add a small badge to header with count
+    const count = Array.isArray(events) ? events.length : 0;
+    const badge = document.createElement('span');
+    badge.textContent = count + ' remote events loaded';
+    badge.style.marginLeft = '12px';
+    badge.style.fontSize = '0.9rem';
+    badge.style.opacity = '0.85';
+    const nav = document.querySelector('nav');
+    if (nav) nav.appendChild(badge);
+
+    // store fetched events to localStorage for offline use
+    try { localStorage.setItem('fetched_events', JSON.stringify(events)); } catch(e){}
+  } catch (err) {
+    console.warn('Could not fetch events.json (this is optional):', err);
+  }
+})();
+
+// ===== Expose a small API to clear assistant-created storage =====
+window.__assist_clear_storage = function() {
+  ['sub_email','lastHover','lastContact','fetched_events','site_theme'].forEach(k => localStorage.removeItem(k));
+  alert('Assistant-created localStorage keys cleared.');
+};
 
 
         
