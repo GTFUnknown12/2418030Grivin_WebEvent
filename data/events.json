@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "title": "AI Revolution Summit",
+    "date": "2023-11-15",
+    "location": "San Francisco"
+  },
+  {
+    "id": 2,
+    "title": "Cloud Computing Expo",
+    "date": "2023-12-02",
+    "location": "London"
+  },
+  {
+    "id": 3,
+    "title": "Cybersecurity Forum",
+    "date": "2024-01-20",
+    "location": "Berlin"
+  }
+]
