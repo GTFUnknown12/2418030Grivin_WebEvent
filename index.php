@@ -13,6 +13,49 @@
     
 </head>
 <body>
+    <?php
+// Proses form registrasi jika disubmit
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['register'])) {
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $phone = $_POST['phone'];
+    $company = $_POST['company'];
+    $event = $_POST['event'];
+    $ticket_type = $_POST['ticket_type'];
+    $registration_date = date('Y-m-d H:i:s');
+    
+    // Simpan data ke file (sebagai pengganti database)
+    $registration_data = array(
+        'id' => time(),
+        'name' => $name,
+        'email' => $email,
+        'phone' => $phone,
+        'company' => $company,
+        'event' => $event,
+        'ticket_type' => $ticket_type,
+        'registration_date' => $registration_date,
+        'status' => 'pending'
+    );
+    
+    // Baca data yang sudah ada
+    $registrations = array();
+    if (file_exists('data/registrations.json')) {
+        $json_data = file_get_contents('data/registrations.json');
+        $registrations = json_decode($json_data, true);
+    }
+    
+    // Tambah data baru
+    $registrations[] = $registration_data;
+    
+    // Simpan ke file
+    if (!is_dir('data')) {
+        mkdir('data', 0777, true);
+    }
+    file_put_contents('data/registrations.json', json_encode($registrations, JSON_PRETTY_PRINT));
+    
+    echo "<script>alert('Thank you, $name! You have successfully registered for $event.');</script>";
+}
+?>
     <header>
         <div class="container">
             <nav>

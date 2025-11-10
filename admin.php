@@ -8,6 +8,49 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <?php
+// Baca data registrasi dari file
+$registrations = array();
+if (file_exists('data/registrations.json')) {
+    $json_data = file_get_contents('data/registrations.json');
+    $registrations = json_decode($json_data, true);
+    if (!is_array($registrations)) {
+        $registrations = array();
+    }
+}
+
+// Proses approve/reject
+if (isset($_GET['action']) && isset($_GET['id'])) {
+    $action = $_GET['action'];
+    $id = $_GET['id'];
+    
+    foreach ($registrations as &$reg) {
+        if ($reg['id'] == $id) {
+            if ($action == 'approve') {
+                $reg['status'] = 'approved';
+            } elseif ($action == 'reject') {
+                $reg['status'] = 'rejected';
+            }
+            break;
+        }
+    }
+    
+    // Simpan perubahan
+    file_put_contents('data/registrations.json', json_encode($registrations, JSON_PRETTY_PRINT));
+    header('Location: admin.php');
+    exit;
+}
+
+// Hitung statistik
+$total_registrations = count($registrations);
+$pending_count = 0;
+$approved_count = 0;
+    
+foreach ($registrations as $reg) {
+    if ($reg['status'] == 'pending') $pending_count++;
+    if ($reg['status'] == 'approved') $approved_count++;
+}
+?>
     <div class="app-container">
         <!-- Sidebar -->
         <aside class="sidebar">
@@ -55,44 +98,44 @@
 
             <div class="content-wrapper">
                 <!-- Admin Stats -->
-                <div class="admin-stats">
-                    <div class="stat-card">
-                        <div class="stat-icon blue">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3>1,245</h3>
-                            <p>Total Users</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon green">
-                            <i class="fas fa-user-check"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3>892</h3>
-                            <p>Active Users</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon purple">
-                            <i class="fas fa-user-shield"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3>12</h3>
-                            <p>Admin Users</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon orange">
-                            <i class="fas fa-user-clock"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3>341</h3>
-                            <p>Pending Approval</p>
-                        </div>
-                    </div>
-                </div>
+<div class="admin-stats">
+    <div class="stat-card">
+        <div class="stat-icon blue">
+            <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-content">
+            <h3><?php echo $total_registrations; ?></h3>
+            <p>Total Registrations</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon green">
+            <i class="fas fa-user-check"></i>
+        </div>
+        <div class="stat-content">
+            <h3><?php echo $approved_count; ?></h3>
+            <p>Approved</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon purple">
+            <i class="fas fa-user-shield"></i>
+        </div>
+        <div class="stat-content">
+            <h3>1</h3>
+            <p>Admin Users</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon orange">
+            <i class="fas fa-user-clock"></i>
+        </div>
+        <div class="stat-content">
+            <h3><?php echo $pending_count; ?></h3>
+            <p>Pending Approval</p>
+        </div>
+    </div>
+</div>
 
                 <!-- User Management -->
                 <div class="user-management">
@@ -122,6 +165,73 @@
                             <option value="pending">Pending</option>
                         </select>
                     </div>
+                    
+                    <!-- Event Registrations Management -->
+<div class="user-management">
+    <div class="section-header">
+        <h2>Event Registrations</h2>
+    </div>
+
+    <!-- Registrations Table -->
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Company</th>
+                    <th>Event</th>
+                    <th>Ticket Type</th>
+                    <th>Registration Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (empty($registrations)): ?>
+                    <tr>
+                        <td colspan="9" style="text-align: center;">No registrations found</td>
+                    </tr>
+                <?php else: ?>
+                    <?php foreach ($registrations as $reg): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($reg['name']); ?></td>
+                            <td><?php echo htmlspecialchars($reg['email']); ?></td>
+                            <td><?php echo htmlspecialchars($reg['phone'] ?: '-'); ?></td>
+                            <td><?php echo htmlspecialchars($reg['company'] ?: '-'); ?></td>
+                            <td><?php echo htmlspecialchars($reg['event']); ?></td>
+                            <td><?php echo htmlspecialchars($reg['ticket_type']); ?></td>
+                            <td><?php echo date('Y-m-d H:i', $reg['id']); ?></td>
+                            <td>
+                                <span class="status-badge <?php echo $reg['status']; ?>">
+                                    <?php echo ucfirst($reg['status']); ?>
+                                </span>
+                            </td>
+                            <td>
+                                <?php if ($reg['status'] == 'pending'): ?>
+                                    <a href="admin.php?action=approve&id=<?php echo $reg['id']; ?>" class="action-btn edit" title="Approve">
+                                        <i class="fas fa-check"></i>
+                                    </a>
+                                    <a href="admin.php?action=reject&id=<?php echo $reg['id']; ?>" class="action-btn delete" title="Reject">
+                                        <i class="fas fa-times"></i>
+                                    </a>
+                                <?php else: ?>
+                                    <span class="action-btn" disabled>
+                                        <i class="fas fa-check"></i>
+                                    </span>
+                                    <span class="action-btn" disabled>
+                                        <i class="fas fa-times"></i>
+                                    </span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
 
                     <!-- Users Table -->
                     <div class="table-container">
