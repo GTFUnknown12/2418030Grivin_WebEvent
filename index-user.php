@@ -14,6 +14,9 @@
 </head>
 <body>
     <?php
+session_start();
+?>
+    <?php
 // Proses form registrasi jika disubmit
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['register'])) {
     $name = $_POST['name'];
@@ -80,7 +83,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['register'])) {
                             <a href="#">Day 3</a>
                         </div>
                     </li>
-                    <li><a href="Login.html">Login</a></li>
+                    <?php if (isset($_SESSION['nama_pembeli'])): ?>
+    <li>
+        <a href="#" style="font-weight: 600;">
+            <?php echo htmlspecialchars($_SESSION['nama_pembeli']); ?>
+        </a>
+    </li>
+<?php endif; ?>
                 </ul>
 </nav>
         </div>
@@ -380,7 +389,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['register'])) {
             </table>
 
     <!--container-tiket-->
-    <div class="Container-Tiket">
+   <div class="Container-Tiket"> 
   <h2 class="FormTiket">PEMBELIAN TIKET</h2>
 
   <form action="proses_tiket.php" method="POST">
@@ -391,39 +400,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['register'])) {
       <input type="text" name="nama" class="inputStyle" readonly 
              value="<?php echo $_SESSION['nama_pembeli']; ?>" />
     </div>
-
+    <div class="input-tiket">
+  <label class="labelTiket">JUDUL TIKET</label>
+  <input type="text" name="judul_tiket" class="inputStyle" required />
+</div>
     <!-- Jumlah tiket -->
     <div class="input-tiket">
       <label class="labelTiket">JUMLAH</label>
-      <input type="number" name="jumlah_tiket" class="inputStyle" required />
+      <input type="number" id="jumlah" name="jumlah_tiket" class="inputStyle" required min="1" />
     </div>
 
-    <!-- Harga satuan -->
+    <!-- Harga satuan fix 10.000 -->
     <div class="input-tiket">
       <label class="labelTiket">HARGA SATUAN (RP)</label>
-      <input type="number" name="harga_satuan" class="inputStyle" required />
+      <input type="number" id="harga_satuan" name="harga_satuan" class="inputStyle" readonly value="10000" />
+    </div>
+
+    <!-- Total harga -->
+    <div class="input-tiket">
+      <label class="labelTiket">TOTAL HARGA (RP)</label>
+      <input type="number" id="total_harga" name="total_harga" class="inputStyle" readonly />
     </div>
 
     <!-- Metode pembayaran -->
     <div class="input-tiket">
       <label class="labelTiket">METODE PEMBAYARAN</label>
       <select name="metode_pembayaran" class="inputStyle" required>
-        <option value="">-- Pilih Metode --</option>
-        <option value="transfer_bank">Transfer Bank</option>
-        <option value="e-wallet">E-Wallet</option>
-        <option value="cash">Cash</option>
+        <option value="">- Pilih -</option>
+        <option value="Transfer Bank">Transfer Bank</option>
+        <option value="E-Wallet">E-Wallet</option>
+        <option value="COD">COD</option>
       </select>
     </div>
 
-    <button type="submit" class="button-tiket">BELI TIKET</button>
+    <button type="submit" class="button-tiket">PROSES</button>
 
   </form>
-
-  <div id="hasil-tiket"></div>
 </div>
 
 
-        </div>
+        
     </section>
     <section id="register" class="cta">
         <div class="container">
@@ -845,18 +861,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (nav) { nav.appendChild(demoBtn); } else { topBar.appendChild(demoBtn); }
 
   // 5) Form submit event example: if a contact form exists, intercept and save
-  const contactForm = document.querySelector('form#contactForm') || document.querySelector('form');
-  if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const formData = new FormData(contactForm);
-      const obj = {};
-      formData.forEach((v,k) => obj[k]=v);
-      try { localStorage.setItem('lastContact', JSON.stringify(obj)); } catch(e){}
-      showAssistModal('Contact saved locally', 'We saved the contact form data to localStorage.');
-      contactForm.reset();
-    });
-  }
+ 
 
   // Load a stored theme preference (example use of Web Storage)
   const theme = localStorage.getItem('site_theme') || 'light';
@@ -903,6 +908,11 @@ window.__assist_clear_storage = function() {
   alert('Assistant-created localStorage keys cleared.');
 };
 
+document.getElementById('jumlah').addEventListener('input', function() {
+    let jumlah = parseInt(this.value);
+    let harga = 10000;
+    document.getElementById('total_harga').value = jumlah > 0 ? jumlah * harga : 0;
+});
 
         
     </script>

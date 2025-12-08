@@ -185,7 +185,7 @@ foreach ($registrations as $reg) {
                     <!-- Event Registrations Management -->
 <div class="user-management">
     <div class="section-header">
-        <h2>Event Registrations</h2>
+        <h2>Users Registrations</h2>
     </div>
 
     <!-- Registrations Table -->
@@ -242,55 +242,57 @@ $pembeli = mysqli_fetch_all($result, MYSQLI_ASSOC);
 </div>
 </div>
 
-                    <!-- Users Table -->
-                    <div class="table-container">
+<!--tiket-->
+
+<?php
+// Query tiket
+$tiket_sql = "SELECT * FROM tb_tiket ORDER BY id_tiket DESC";
+$tiket_query = mysqli_query($koneksi, $tiket_sql);
+$query = mysqli_query($koneksi, "SELECT * FROM tb_tiket ORDER BY id_tiket DESC");
+if (!$tiket_query) {
+    die("QUERY TIKET ERROR: " . mysqli_error($koneksi));
+}
+?>
+<div class="table-container">
+    <h2 style="margin-bottom:15px;">DATA PEMBELIAN TIKET</h2>
+
     <table class="data-table">
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Email</th>
-                <th>Username</th>
-                <th>Password (Hashed)</th>
-                <th>Aksi</th>
+                <th>Judul Tiket</th>
+                <th>Jumlah</th>
+                <th>Harga Satuan</th>
+                <th>Total Harga</th>
+                <th>Metode Pembayaran</th>
+                <th>Status Pembayaran</th>
             </tr>
         </thead>
         <tbody>
-
-            <?php if (empty($pembeli_list)): ?>
+            <?php if (mysqli_num_rows($tiket_query) == 0): ?>
                 <tr>
-                    <td colspan="5" style="text-align:center;">Tidak ada data pembeli</td>
+                    <td colspan="8" style="text-align:center;">Belum ada transaksi tiket</td>
                 </tr>
-
             <?php else: ?>
-                <?php foreach ($pembeli_list as $p): ?>
-                    <tr>
-                        <td><?php echo $p['id_pembeli']; ?></td>
-                        <td><?php echo htmlspecialchars($p['email']); ?></td>
-                        <td><?php echo htmlspecialchars($p['username']); ?></td>
+                <?php while ($row = mysqli_fetch_assoc($tiket_query)): ?>
+                <tr>
+                    <td><?= $row['id_tiket'] ?></td>
+                    <td><?= htmlspecialchars($row['judul_tiket']) ?></td>
+                    <td><?= $row['jumlah_tiket'] ?></td>
+                    <td><?= number_format($row['harga_satuan']) ?></td>
+                    <td><?= number_format($row['total_harga']) ?></td>
+                    <td><?= htmlspecialchars($row['metode_pembayaran']) ?></td>
+                    <td><?= htmlspecialchars($row['status_pembayaran']) ?></td>
 
-                        <td class="hashtext">
-                            <?php echo $p['password']; ?>
-                        </td>
-
-                        <td>
-                            <a href="pembeli-edit.php?id=<?php echo $p['id_pembeli']; ?>" 
-                               class="action-btn edit" title="Edit">
-                                <i class="fas fa-edit"></i>
-                            </a>
-
-                            <a href="pembeli-hapus.php?id=<?php echo $p['id_pembeli']; ?>" 
-                               class="action-btn delete" title="Hapus"
-                               onclick="return confirm('Yakin hapus data ini?')">
-                                <i class="fas fa-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
+                
+                </tr>
+                <?php endwhile; ?>
             <?php endif; ?>
-
         </tbody>
     </table>
 </div>
+
+                 
 
 
                     <!-- Pagination -->

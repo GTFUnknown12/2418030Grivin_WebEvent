@@ -22,7 +22,7 @@ if (isset($_POST['login'])) {
             $_SESSION['username'] = $row['username'];
             $_SESSION['nama_pembeli'] = $row['nama_pembeli'];
 
-            header('Location: admin.php');
+            header('Location: index-user.php');
             exit;
 
         } else {
