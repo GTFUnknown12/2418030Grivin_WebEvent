@@ -6,6 +6,7 @@ use App\Models\Ticket;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class TicketController extends Controller
 {
@@ -15,9 +16,9 @@ class TicketController extends Controller
             $pembeli = Auth::guard('pembeli')->user();
             $tickets = Ticket::where('pembeli_id', $pembeli->id_pembeli)
                 ->orderBy('created_at', 'desc')
-                ->paginate(10);
+                ->get();
 
-            return view('tickets.index', compact('tickets'));
+            return view('index-user', compact('tickets'));
         }
 
         return redirect()->route('login');
@@ -56,9 +57,55 @@ class TicketController extends Controller
             'description' => "Pembelian tiket: {$request->judul_tiket}",
         ]);
 
-        // PERBAIKAN: Gunakan route 'index.user' bukan 'index-user'
         return redirect()->route('index.user')->with('success', 'Tiket berhasil dipesan!');
     }
 
-    // ... methods lainnya tetap sama
+    // ✅ METHOD EXPORT PDF YANG BERFUNGSI
+    public function exportPDF()
+    {
+        // Cek apakah user sudah login
+        if (!Auth::guard('pembeli')->check()) {
+            return redirect()->route('login');
+        }
+
+        $pembeli = Auth::guard('pembeli')->user();
+        
+        // Ambil semua tiket user
+        $tickets = Ticket::where('pembeli_id', $pembeli->id_pembeli)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Jika tidak ada tiket
+        if ($tickets->isEmpty()) {
+            return redirect()->back()->with('error', 'Tidak ada tiket untuk diexport.');
+        }
+
+        // Data untuk PDF
+        $data = [
+            'title' => 'Laporan Tiket - ' . $pembeli->nama_pembeli,
+            'date' => date('d/m/Y H:i:s'),
+            'pembeli' => $pembeli,
+            'tickets' => $tickets,
+            'totalTickets' => $tickets->count(),
+            'totalAmount' => $tickets->sum('total_harga'),
+        ];
+
+        // Generate PDF
+        $pdf = Pdf::loadView('tickets.export-pdf', $data);
+        
+        // Set nama file
+        $filename = 'tiket-' . str_replace(' ', '-', strtolower($pembeli->nama_pembeli)) . '-' . date('Y-m-d') . '.pdf';
+        
+        // Download PDF
+        return $pdf->download($filename);
+    }
+
+    public function show($id)
+    {
+        $ticket = Ticket::where('id_tiket', $id)
+            ->where('pembeli_id', Auth::guard('pembeli')->user()->id_pembeli)
+            ->firstOrFail();
+            
+        return view('tickets.show', compact('ticket'));
+    }
 }

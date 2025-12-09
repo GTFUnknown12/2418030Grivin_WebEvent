@@ -8,12 +8,11 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
-
 // Public routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-// Authentication rute
+// Authentication routes
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login')->middleware('guest');
 Route::post('/login', [AuthController::class, 'login'])->middleware('guest');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register')->middleware('guest');
@@ -29,10 +28,13 @@ Route::middleware(['auth:pembeli'])->group(function () {
     // User dashboard
     Route::get('/user/dashboard', [HomeController::class, 'userDashboard'])->name('index.user');
     
-    // Tickets
+    // Tickets routes - PAKAI INI
     Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');
     Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');
     Route::get('/tickets/{id}', [TicketController::class, 'show'])->name('tickets.show');
+    
+    
+    Route::get('/export-pdf', [TicketController::class, 'exportPDF'])->name('tickets.export.pdf');
     
     // Event registration
     Route::post('/events/{id}/register', [EventController::class, 'registerEvent'])->name('events.register');

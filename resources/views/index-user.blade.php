@@ -120,6 +120,17 @@
                 <p class="text-gray-600 max-w-3xl mx-auto mt-4">Your purchased tickets and registration details.</p>
             </div>
 
+            <!-- ✅ BUTTON EXPORT YANG BENAR -->
+            @if($tickets->count() > 0)
+            <div class="flex justify-end mb-4">
+                <button onclick="exportPDF()" 
+                       class="btn export-btn" 
+                       style="background-color: #dc2626; color: white; padding: 10px 20px; border-radius: 5px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; border: none; font-size: 14px;">
+                    <i data-feather="download"></i> Export to PDF
+                </button>
+            </div>
+            @endif
+
             @if($tickets->count() > 0)
             <div class="tickets-list">
                 <table class="schedule-table">
@@ -349,6 +360,12 @@
                 }
             });
         });
+
+        // Function untuk export PDF
+        function exportPDF() {
+            // Redirect ke route export PDF
+            window.location.href = "{{ url('/export-pdf') }}";
+        }
     </script>
 </body>
 </html>
