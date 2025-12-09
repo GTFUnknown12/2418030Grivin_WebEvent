@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ asset('css/cwnXtechStylesheet.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/Xcss2.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/Logo.css') }}">
+    <link rel="icon" href="{{ asset('Icon/CwnIcon1.png') }}">
+    <title>CwnXtech | Event & Conference</title>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                 <img src="{{ asset('Icon/CwnIcon1.png') }}" alt="logo" class ="logo">
+                <ul class="nav-links">
+                    <li><a href="{{ route('home') }}">Home</a></li>
+                    <li class="dropdown">
+                        <a href="#events">Events <i data-feather="chevron-down"></i></a>
+                        <div class="dropdown-content">
+                            <a href="#">Tech Summit</a>
+                            <a href="#">Marketing Conference</a>
+                            <a href="#">Leadership Forum</a>
+                            <a href="#">All Events</a>
+                        </div>
+                    </li>
+                    <li><a href="#speakers">Speakers</a></li>
+                    <li class="dropdown">
+                        <a href="#schedule">Schedule <i data-feather="chevron-down"></i></a>
+                        <div class="dropdown-content">
+                            <a href="#">Day 1</a>
+                            <a href="#">Day 2</a>
+                            <a href="#">Day 3</a>
+                        </div>
+                    </li>
+                    @if(Auth::guard('pembeli')->check())
+                        <li><a href="{{ route('index.user') }}">Dashboard</a></li>
+                        <li>
+                            <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+                                @csrf
+                                <button type="submit" class="dropdown-content" >Logout</button>
+                            </form>
+                        </li>
+                    @else
+                        <li><a href="{{ route('login') }}">Login</a></li>
+                    @endif
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Event And Conference</h1>
+            <p class="text-xl max-w-2xl mx-auto mb-8 text-gray-300">Join industry leaders and innovators at the premier conference event of the year. Network, learn, and grow together.</p>
+            <div class="text-white mt-6">
+                <p class="text-lg mb-2">Next Event: AI Revolution Summit</p>
+                <p class="text-sm opacity-80">November 15-20, 2025 | Malang</p>
+            </div>
+            <div class="flex gap-4 justify-center">
+                <a href="#register" class="btn">Register Now</a>
+                <a href="#events" class="btn" id="Explore">Explore Events</a>
+            </div>
+            <div class="mt-12">
+                <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_b88nh30c.json"  background="transparent"  speed="1"  style="width: 200px; height: 200px; margin: 0 auto;"  loop  autoplay></lottie-player>
+            </div>
+        </div>
+    </section>
+
+    <section id="events" class="events">
+        <div class="container">
+            <div class="section-title">
+                <h2>Upcoming Events</h2>
+                <p class="text-gray-600 max-w-3xl mx-auto mt-4">Join our world-class conferences featuring cutting edge topics and networking opportunities with industry leaders. Our events consistently receive 95%+ satisfaction ratings from attendees.</p>
+            </div>
+            <div class="event-grid">
+                @foreach($events as $event)
+                <div class="event-card">
+                    <div class="event-media-container">
+                        <img src="{{ $event->image_url ?: 'http://static.photos/technology/640x360/20' }}" alt="{{ $event->title }}" class="event-img">
+                        <div class="event-badge">{{ $event->category }}</div>
+                    </div>
+                    <div class="event-info">
+                        <h3>{{ $event->title }}</h3>
+                        <div class="event-meta">
+                            <span class="event-date">
+                                <i data-feather="calendar"></i> {{ $event->start_date->format('M d') }}-{{ $event->end_date->format('d, Y') }}
+                            </span>
+                            <span class="event-location">
+                                <i data-feather="map-pin"></i> {{ $event->location }}
+                            </span>
+                        </div>
+                        <p class="event-desc">{{ Str::limit($event->description, 120) }}</p>
+                        <div class="event-cta">
+                            <a href="{{ route('events.show', $event->id) }}" class="btn event-details-btn">Learn More</a>
+                            <span class="event-price">${{ number_format($event->price, 0) }} <small>Early Bird</small></span>
+                        </div>
+                        <div class="event-stats">
+                            <div class="stat-item">
+                                <i data-feather="users"></i>
+                                <span>{{ $event->max_attendees }} Attendees</span>
+                            </div>
+                            <div class="stat-item">
+                                <i data-feather="clock"></i>
+                                <span>{{ $event->start_date->diffInDays($event->end_date) + 1 }} Days</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    <section id="speakers" class="speakers">
+        <div class="container">
+            <div class="section-title">
+                <h2>Featured Speakers</h2>
+                <p class="text-gray-600 max-w-3xl mx-auto mt-4">Learn from renowned experts and innovators who are shaping the future of technology. Our speakers come from top organizations including FAANG companies, leading research institutions, and successful startups.</p>
+            </div>
+            <div class="speaker-grid">
+                <div class="speaker-card">
+                    <img src="http://static.photos/people/200x200/30" alt="Speaker" class="speaker-img">
+                    <h3>Dr. Elena Petrova</h3>
+                    <div class="speaker-title">AI Research Lead, DeepMind</div>
+                    <p>Specializing in neural networks and deep learning architectures.</p>
+                    <div class="speaker-social mt-3">
+                        <a href="#"><i data-feather="twitter"></i></a>
+                        <a href="#"><i data-feather="linkedin"></i></a>
+                        <a href="#"><i data-feather="github"></i></a>
+                    </div>
+                </div>
+                
+                <div class="speaker-card">
+                    <img src="http://static.photos/people/200x200/31" alt="Speaker" class="speaker-img">
+                    <h3>Mark Johnson</h3>
+                    <div class="speaker-title">Founder, Web3 Labs</div>
+                    <p>Blockchain expert and decentralized application developer.</p>
+                </div>
+                
+                <div class="speaker-card">
+                    <img src="http://static.photos/people/200x200/32" alt="Speaker" class="speaker-img">
+                    <h3>Sarah Williams</h3>
+                    <div class="speaker-title">CISO, Fortune 500</div>
+                    <p>Cybersecurity strategist with 15+ years experience.</p>
+                </div>
+                
+                <div class="speaker-card">
+                    <img src="http://static.photos/people/200x200/33" alt="Speaker" class="speaker-img">
+                    <h3>David Chen</h3>
+                    <div class="speaker-title">Cloud Architect, AWS</div>
+                    <p>Specializing in scalable cloud infrastructure and serverless.</p>
+                </div>
+
+                <div class="speaker-card">
+                    <img src="http://static.photos/people/200x200/34" alt="Speaker" class="speaker-img">
+                    <h3>Lisa Rodriguez</h3>
+                    <div class="speaker-title">DevOps Engineer, Google</div>
+                    <p>CI/CD pipelines and infrastructure automation specialist.</p>
+                </div>
+
+                <div class="speaker-card">
+                    <img src="http://static.photos/people/200x200/35" alt="Speaker" class="speaker-img">
+                    <h3>Michael Brown</h3>
+                    <div class="speaker-title">Data Science Director, Netflix</div>
+                    <p>Machine learning and recommendation systems expert.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="schedule" class="schedule">
+        <div class="container">
+            <div class="section-title">
+                <h2>Event Schedule</h2>
+                <p class="text-gray-600 max-w-3xl mx-auto mt-4">Each day is packed with insightful sessions, hands-on workshops, and networking opportunities. Our schedule is carefully designed to maximize learning and engagement throughout the event.</p>
+            </div>
+            <table class="schedule-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Session</th>
+                        <th>Speaker</th>
+                        <th>Location</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>8:30 AM</td>
+                        <td>Registration & Breakfast</td>
+                        <td>-</td>
+                        <td>Lobby</td>
+                    </tr>
+                    <tr>
+                        <td>9:30 AM</td>
+                        <td>Keynote: AI in 2024</td>
+                        <td>Dr. Elena Petrova</td>
+                        <td>Main Hall</td>
+                    </tr>
+                    <tr>
+                        <td>11:00 AM</td>
+                        <td>Blockchain Revolution</td>
+                        <td>Mark Johnson</td>
+                        <td>Room A</td>
+                    </tr>
+                    <tr>
+                        <td>12:30 PM</td>
+                        <td>Lunch Break</td>
+                        <td>-</td>
+                        <td>Dining Hall</td>
+                    </tr>
+                    <tr>
+                        <td>2:00 PM</td>
+                        <td>Zero Trust Security</td>
+                        <td>Sarah Williams</td>
+                        <td>Room B</td>
+                    </tr>
+                    <tr>
+                        <td>3:30 PM</td>
+                        <td>Cloud Native Workshop</td>
+                        <td>David Chen</td>
+                        <td>Room C</td>
+                    </tr>
+                    <tr>
+                        <td>5:00 PM</td>
+                        <td>Closing Panel: Tech Trends</td>
+                        <td>All Speakers</td>
+                        <td>Main Hall</td>
+                    </tr>
+                    <tr>
+                        <td>6:30 PM</td>    
+                        <td>Networking Reception</td>
+                        <td>-</td>
+                        <td>Grand Ballroom</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            @if(Auth::guard('pembeli')->check())
+            <!--container-tiket-->
+            <div class="Container-Tiket">
+                <h2 class="FormTiket">PEMBELIAN TIKET</h2>
+                <form action="{{ route('tickets.store') }}" method="POST">
+                    @csrf
+                    <div class="input-tiket">
+                        <label class="labelTiket">NAMA</label>
+                        <input type="text" name="nama" class="inputStyle" readonly 
+                            value="{{ Auth::guard('pembeli')->user()->nama_pembeli }}" />
+                    </div>
+                    <div class="input-tiket">
+                        <label class="labelTiket">JUDUL TIKET</label>
+                        <input type="text" name="judul_tiket" class="inputStyle" required />
+                    </div>
+                    <div class="input-tiket">
+                        <label class="labelTiket">JUMLAH</label>
+                        <input type="number" id="jumlah" name="jumlah_tiket" class="inputStyle" required min="1" />
+                    </div>
+                    <div class="input-tiket">
+                        <label class="labelTiket">HARGA SATUAN (RP)</label>
+                        <input type="number" id="harga_satuan" name="harga_satuan" class="inputStyle" required />
+                    </div>
+                    <div class="input-tiket">
+                        <label class="labelTiket">TOTAL HARGA (RP)</label>
+                        <input type="number" id="total_harga" name="total_harga" class="inputStyle" readonly />
+                    </div>
+                    <div class="input-tiket">
+                        <label class="labelTiket">METODE PEMBAYARAN</label>
+                        <select name="metode_pembayaran" class="inputStyle" required>
+                            <option value="">- Pilih -</option>
+                            <option value="Transfer Bank">Transfer Bank</option>
+                            <option value="E-Wallet">E-Wallet</option>
+                            <option value="COD">COD</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="button-tiket">PROSES</button>
+                </form>
+            </div>
+            @endif
+        </div>
+    </section>
+
+    <section id="register" class="cta">
+        <div class="container">
+            <h2>Ready to Join Us?</h2>
+            <p>Register now to secure your spot at the most anticipated conference of the year. Early bird registrants save 20% and receive exclusive access to pre-event materials and networking sessions.</p>
+            <div class="benefits-grid">
+                <div class="benefit-item">
+                    <i data-feather="award"></i>
+                    <p>Certificate of Attendance</p>
+                </div>
+                <div class="benefit-item">
+                    <i data-feather="video"></i>
+                    <p>Session Recordings</p>
+                </div>
+                <div class="benefit-item">
+                    <i data-feather="users"></i>
+                    <p>Networking Events</p>
+                </div>
+                <div class="benefit-item">
+                    <i data-feather="book"></i>
+                    <p>Workshop Materials</p>
+                </div>
+            </div>
+            @if(Auth::guard('pembeli')->check())
+                <a href="{{ route('tickets.index') }}" class="btn register-btn">Buy Tickets</a>
+            @else
+                <a href="{{ route('register') }}" class="btn register-btn">Register Today</a>
+            @endif
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>CwnXtech</h3>
+                    <p>Creating unforgettable conference experiences created by grivin.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="{{ route('home') }}">Home</a></li>
+                        <li><a href="#events">Events</a></li>
+                        <li><a href="#speakers">Speakers</a></li>
+                        <li><a href="#schedule">Schedule</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Information</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Venue</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#" id="footerContactLink">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Legal</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Refund Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; {{ date('Y') }} GRIVIN WILLIAM REVEL. All rights reserved. <span class="block sm:inline">Contact Me: gr1vin.gamer@gmail.com | +62 82150245906</span></p>
+                <div class="flex justify-center mt-4 gap-4">
+                    <a href="#" class="text-gray-400 hover:text-white transition"><i data-feather="twitter"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white transition"><i data-feather="instagram"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white transition"><i data-feather="linkedin"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white transition"><i data-feather="facebook"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Container form contact (awal tersembunyi) -->
+        <div id="contactFormContainer" class="contact-form-container">
+            <div class="contact-box">
+                <span id="closeContactBtn" class="close-btn">&times;</span>
+                <h2>Hubungi Kami</h2>
+                <form id="contactFormSubmit">
+                    <label for="contactName">Nama</label>
+                    <input type="text" id="contactName" class ="input-contact" placeholder="Masukkan nama Anda" required>
+                    <label for="contactEmail">Email</label>
+                    <input type="email" id="contactEmail" class ="input-contact" placeholder="Masukkan email Anda" required>
+                    <label for="contactMessage">Pesan</label>
+                    <textarea id="contactMessage" rows="5" class ="input-textarea" placeholder="Tulis pesan Anda..." required></textarea>
+                    <button type="submit" class="buttonContact">Kirim Pesan</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Snackbar -->
+        <div id="contactSnackbar">Pesan Anda telah dikirim!</div>
+    </footer>
+
+    <script>
+        feather.replace();
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // Animasi ketika scroll 
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-fadeIn');
+                        if (entry.target.classList.contains('event-card')) {
+                            entry.target.style.transform = 'translateY(0)';
+                        }
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.event-card, .speaker-card, .section-title').forEach(el => {
+                observer.observe(el);
+                el.style.opacity = '0';
+                el.style.transition = 'all 0.6s ease-out';
+                if (el.classList.contains('event-card')) {
+                    el.style.transform = 'translateY(20px)';
+                }
+            });
+
+            // Event card hover effects
+            document.querySelectorAll('.event-card').forEach(card => {
+                const img = card.querySelector('.event-img');
+                card.addEventListener('mouseenter', () => {
+                    img.style.transform = 'scale(1.05)';
+                });
+                card.addEventListener('mouseleave', () => {
+                    img.style.transform = 'scale(1)';
+                });
+            });
+
+            // Speaker card click for details
+            document.querySelectorAll('.speaker-card').forEach(card => {
+                card.style.cursor = 'pointer';
+                card.addEventListener('click', () => {
+                    const name = card.querySelector('h3').textContent;
+                    const title = card.querySelector('.speaker-title').textContent;
+                    alert(`Speaker Details:\n\nName: ${name}\nTitle: ${title}`);
+                });
+            });
+
+            // Schedule table row highlighting
+            document.querySelectorAll('.schedule-table tr').forEach(row => {
+                row.addEventListener('mouseenter', () => {
+                    row.style.backgroundColor = '#f1f5f9';
+                });
+                row.addEventListener('mouseleave', () => {
+                    row.style.backgroundColor = '';
+                });
+            });
+
+            // Countdown timer untuk event berikut nya
+            function updateCountdown() {
+                const nextEventDate = new Date('2025-11-15T09:00:00');
+                const now = new Date();
+                const diff = nextEventDate - now;
+                
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                
+                const countdownEl = document.createElement('div');
+                countdownEl.className = 'countdown-timer';
+                countdownEl.innerHTML = `
+                    <div class="countdown-item">
+                        <span class="countdown-number">${days}</span>
+                        <span class="countdown-label">Days</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-number">${hours}</span>
+                        <span class="countdown-label">Hours</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-number">${minutes}</span>
+                        <span class="countdown-label">Minutes</span>
+                    </div>
+                `;
+                
+                const existingTimer = document.querySelector('.countdown-timer');
+                if (existingTimer) {
+                    existingTimer.replaceWith(countdownEl);
+                } else {
+                    const hero = document.querySelector('.hero-content');
+                    hero.appendChild(countdownEl);
+                }
+            }
+
+            updateCountdown();
+            setInterval(updateCountdown, 60000);
+
+            // Registrasi untuk event
+            const registerBtns = document.querySelectorAll('.btn[href="#register"]');
+            registerBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showRegistrationModal();
+                });
+            });
+
+            function showRegistrationModal() {
+                const modal = document.createElement('div');
+                modal.className = 'modal-overlay';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <span class="close-modal">&times;</span>
+                        <h3>Register for Event</h3>
+                        <form id="registrationForm">
+                            <div class="form-group">
+                                <label for="name">Full Name</label>
+                                <input type="text" id="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="event">Select Event</label>
+                                <select id="event" required>
+                                    <option value="">-- Choose Event --</option>
+                                    <option value="AI Revolution Summit">AI Revolution Summit</option>
+                                    <option value="Web3 & Blockchain Expo">Web3 & Blockchain Expo</option>
+                                    <option value="Cyber Security Forum">Cyber Security Forum</option>
+                                    <option value="Cloud Computing Summit">Cloud Computing Summit</option>
+                                    <option value="DevOps Days">DevOps Days</option>
+                                    <option value="Data Science Conference">Data Science Conference</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn">Complete Registration</button>
+                        </form>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                document.querySelector('.close-modal').addEventListener('click', () => {
+                    modal.remove();
+                });
+                
+                document.getElementById('registrationForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const name = document.getElementById('name').value;
+                    const event = document.getElementById('event').value;
+                    alert(`Thank you, ${name}! You've successfully registered for ${event}.`);
+                    modal.remove();
+                });
+            }
+
+            //untuk tiket form
+            function proses() {
+                let tiket = document.getElementById("tiket").value;
+                let jumlah = parseInt(document.getElementById("jumlah-tiket").value);
+                let harga = parseInt(document.getElementById("harga-tiket").value);
+                let hasil = document.getElementById("hasil-tiket");
+
+                if (!tiket || jumlah <= 0 || harga <= 0) {
+                    alert("Isi semua data dengan benar!");
+                    return;
+                }
+
+                let total = jumlah * harga;
+                hasil.innerHTML = `
+                <b>Rincian Pesanan:</b><br>
+                NAMA : ${tiket}<br>
+                JUMLAH : ${jumlah}<br>
+                TOTAL HARGA : Rp${total.toLocaleString("id-ID")}
+                `;
+            }
+
+            function hapus() {
+                document.getElementById("tiket").value = "";
+                document.getElementById("jumlah-tiket").value = "";
+                document.getElementById("harga-tiket").value = "";
+                document.getElementById("hasil-tiket").innerHTML = "";
+            }
+
+            //INI UNTUK CONTACT DI FOOTER
+            const footerContactLink = document.getElementById("footerContactLink");
+            const contactFormContainer = document.getElementById("contactFormContainer");
+            const contactFormSubmit = document.getElementById("contactFormSubmit");
+            const contactSnackbar = document.getElementById("contactSnackbar");
+            const closeContactBtn = document.getElementById("closeContactBtn");
+
+            // Klik link "Contact" 
+            if (footerContactLink) {
+                footerContactLink.addEventListener("click", function(event) {
+                    event.preventDefault();
+                    contactFormContainer.style.display = "flex";
+                });
+            }
+
+            // Klik tombol close
+            if (closeContactBtn) {
+                closeContactBtn.addEventListener("click", function() {
+                    contactFormContainer.style.display = "none";
+                });
+            }
+
+            // Klik Utk nyembunyi
+            window.addEventListener("click", function(event) {
+                if (event.target === contactFormContainer) {
+                    contactFormContainer.style.display = "none";
+                }
+            });
+
+            // Saat user submit form
+            if (contactFormSubmit) {
+                contactFormSubmit.addEventListener("submit", function(event) {
+                    event.preventDefault();
+
+                    const nameVal = document.getElementById("contactName").value.trim();
+                    const emailVal = document.getElementById("contactEmail").value.trim();
+                    const msgVal = document.getElementById("contactMessage").value.trim();
+
+                    if (!nameVal || !emailVal || !msgVal) {
+                        alert("Mohon isi semua kolom sebelum mengirim pesan.");
+                        return;
+                    }
+
+                    contactFormSubmit.reset();
+                    contactFormContainer.style.display = "none";
+
+                    // Tampilkan snackbar sukses
+                    contactSnackbar.classList.add("show");
+                    setTimeout(() => {
+                        contactSnackbar.classList.remove("show");
+                    }, 3000);
+                });
+            }
+
+            // ngesubrek button #1
+            (function() {
+                // Create modal HTML
+                const modalHtml = `
+                <div id="assistModal" class="assist-modal" style="display:none;position:fixed;inset:0;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);z-index:9999;">
+                    <div style="background:#fff;border-radius:8px;padding:20px;max-width:460px;width:90%;box-shadow:0 8px 30px rgba(0,0,0,0.2);">
+                        <h3 id="assistModalTitle">Welcome</h3>
+                        <p id="assistModalBody">This site has interactive features (popups, events, storage, fetch, promises).</p>
+                        <div style="text-align:right;margin-top:12px;">
+                        <button id="assistModalClose" class="btn">Close</button>
+                        </div>
+                    </div>
+                </div>`;
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+                const assistModal = document.getElementById('assistModal');
+                const assistModalClose = document.getElementById('assistModalClose');
+                assistModalClose.addEventListener('click', () => {
+                    assistModal.style.display = 'none';
+                });
+
+                // Expose show function
+                window.showAssistModal = function(title, body) {
+                    document.getElementById('assistModalTitle').textContent = title;
+                    document.getElementById('assistModalBody').textContent = body;
+                    assistModal.style.display = 'flex';
+                };
+            })();
+
+            // Konfirmasi ke#2
+            function confirmSubscribe() {
+                const ok = confirm('Apakah kamu mau subscribe?');
+                if (!ok) {
+                    alert('Yaudah sih....');
+                    return false;
+                }
+                const email = prompt('Masukan (example@example.com):', '');
+                if (email) {
+                    // save to localStorage
+                    try { localStorage.setItem('Subscribe_Email', email); } catch(e){}
+                    alert('TerimaKasih Emailmu telah disimpan secara lokal.');
+                    return true;
+                } else {
+                    alert('Subscription dibatalkan.');
+                    return false;
+                }
+            }
+
+            // ===== Events: add 3+ event listeners =====
+            // 1) Click event on all .event-details-btn to open modal with details
+            document.querySelectorAll('.event-details-btn').forEach((btn, i) => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const card = btn.closest('.event-card');
+                    const title = card?.querySelector('h3')?.textContent || ('Event '+(i+1));
+                    const desc = card?.querySelector('.event-desc')?.textContent || '';
+                    showAssistModal(title, desc + '\n\n(Click Close to dismiss)');
+                });
+            });
+
+            // 2) Mouseover event: when hovering any .event-card, store lastHover
+            document.querySelectorAll('.event-card').forEach(card => {
+                card.addEventListener('mouseover', () => {
+                    const t = card.querySelector('h3')?.textContent || 'Unknown event';
+                    try { localStorage.setItem('lastHover', t); } catch(e){}
+                    // visual feedback
+                    card.style.transform = 'translateY(-6px)';
+                });
+                card.addEventListener('mouseout', () => { card.style.transform = ''; });
+            });
+
+            // 3) Keyup event: show snackbar when user types 'h' on keyboard (example)
+            document.addEventListener('keyup', (ev) => {
+                if (ev.key.toLowerCase() === 'h') {
+                    const last = localStorage.getItem('lastHover') || 'no event hovered yet';
+                    showAssistModal('Quick Help', 'Last hovered event: '+ last);
+                }
+            });
+
+            // 4) Click on a special button we'll insert to demonstrate confirm/prompt
+            const topBar = document.querySelector('header .container') || document.body;
+            const demoBtn = document.createElement('a');
+            demoBtn.textContent = 'Subscribe';
+            demoBtn.className = 'nav-links';
+            demoBtn.style.marginLeft = '-270px';
+            demoBtn.style.cursor = 'pointer'
+            demoBtn.addEventListener('click', () => {
+                confirmSubscribe();
+            });
+            // append near navigation
+            const nav = document.querySelector('nav');
+            if (nav) { nav.appendChild(demoBtn); } else { topBar.appendChild(demoBtn); }
+
+            // 5) Form submit event example: if a contact form exists, intercept and save
+            const contactForm = document.querySelector('form#contactForm') || document.querySelector('form');
+            if (contactForm) {
+                contactForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(contactForm);
+                    const obj = {};
+                    formData.forEach((v,k) => obj[k]=v);
+                    try { localStorage.setItem('lastContact', JSON.stringify(obj)); } catch(e){}
+                    showAssistModal('Contact saved locally', 'We saved the contact form data to localStorage.');
+                    contactForm.reset();
+                });
+            }
+
+            // Load a stored theme preference (example use of Web Storage)
+            const theme = localStorage.getItem('site_theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+
+            // Calculate total harga for ticket form
+            document.getElementById('jumlah')?.addEventListener('input', function() {
+                let jumlah = parseInt(this.value) || 0;
+                let harga = parseInt(document.getElementById('harga_satuan').value) || 0;
+                document.getElementById('total_harga').value = jumlah * harga;
+            });
+
+            document.getElementById('harga_satuan')?.addEventListener('input', function() {
+                let jumlah = parseInt(document.getElementById('jumlah').value) || 0;
+                let harga = parseInt(this.value) || 0;
+                document.getElementById('total_harga').value = jumlah * harga;
+            });
+        });
+
+        // ===== Fetch + Promise example =====
+        // We'll fetch a local JSON (events.json) and display count in the header.
+        // Create a Promise wrapper that resolves with parsed JSON.
+        function fetchEventsJson(url) {
+            return new Promise((resolve, reject) => {
+                fetch(url).then(resp => {
+                    if (!resp.ok) throw new Error('Network error');
+                    return resp.json();
+                }).then(data => resolve(data)).catch(err => reject(err));
+            });
+        }
+
+        // Async/Await usage to get events and update DOM
+        (async function loadEvents() {
+            const url = '/api/events';
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Network error');
+                const events = await response.json();
+                // simple display: add a small badge to header with count
+                const count = Array.isArray(events) ? events.length : 0;
+                const badge = document.createElement('span');
+                badge.textContent = count + ' events available';
+                badge.style.marginLeft = '12px';
+                badge.style.fontSize = '0.9rem';
+                badge.style.opacity = '0.85';
+                badge.style.color = '#fff';
+                badge.style.backgroundColor = '#4f46e5';
+                badge.style.padding = '4px 8px';
+                badge.style.borderRadius = '4px';
+                const nav = document.querySelector('nav');
+                if (nav) nav.appendChild(badge);
+
+                // store fetched events to localStorage for offline use
+                try { localStorage.setItem('fetched_events', JSON.stringify(events)); } catch(e){}
+            } catch (err) {
+                console.warn('Could not fetch events:', err);
+            }
+        })();
+
+        // ===== Expose a small API to clear assistant-created storage =====
+        window.__assist_clear_storage = function() {
+            ['Subscribe_Email','lastHover','lastContact','fetched_events','site_theme'].forEach(k => localStorage.removeItem(k));
+            alert('Assistant-created localStorage keys cleared.');
+        };
+    </script>
+</body>
+</html>

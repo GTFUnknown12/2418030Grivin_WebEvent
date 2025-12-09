@@ -1,0 +1,9 @@
+/*Untuk logo index bawah */
+.logo2 {
+            /* Anda bisa menambahkan gaya ke div .logo jika diperlukan untuk centering atau sizing */
+            width: 150px;   /* ukuran logo */
+            height: auto;
+            margin : auto;
+             /* kasih jarak kecil ke teks (opsional) */
+            display: block;
+}
