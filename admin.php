@@ -186,6 +186,11 @@ foreach ($registrations as $reg) {
 <div class="user-management">
     <div class="section-header">
         <h2>Users Registrations</h2>
+         <div>
+            <a href="export_pdf.php?type=users" class="btn-pdf" style="background-color: #dc3545; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px; display: inline-flex; align-items: center; gap: 8px;">
+                <i class="fas fa-file-pdf"></i> Export to PDF
+            </a>
+        </div>
     </div>
 
     <!-- Registrations Table -->
@@ -255,7 +260,11 @@ if (!$tiket_query) {
 ?>
 <div class="table-container">
     <h2 style="margin-bottom:15px;">DATA PEMBELIAN TIKET</h2>
-
+    <div>
+            <a href="export_pdf.php?type=tiket" class="btn-pdf" style="background-color: #dc3545; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px; display: inline-flex; align-items: center; gap: 8px;">
+                <i class="fas fa-file-pdf"></i> Export to PDF
+            </a>
+        </div>
     <table class="data-table">
         <thead>
             <tr>
