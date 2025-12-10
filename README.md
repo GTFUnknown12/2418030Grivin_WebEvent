@@ -1,3 +1,2 @@
-cek branch! oleh ada bab 1-5! utk bab 1-2 saya ubah total di bab 3 oleh gk boleh pake framework toh? yowes kurombak. untuk commit sya kasih keterangan di branch lain, nama branch itu bab. 
-
-Branch 1-10 sesuai bab. cek aja. untuk commit bisa di cek setiap perubahan ketika naik bab
+ 
+Branch 1-10 sesuai bab. cek aja. untuk commit bisa di cek setiap perubahan ketika naik bab. sya pakai checkout -b baru push
